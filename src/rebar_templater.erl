@@ -167,27 +167,11 @@ create1(Config, TemplateId) ->
     execute_template(Files, FinalTemplate, Type, Template, Context, Force, []).
 
 find_templates(Config) ->
-    %% Load a list of all the files in the escript -- cache them since
-    %% we'll potentially need to walk it several times over the course of
-    %% a run.
-    Files = cache_escript_files(Config),
-
     %% Build a list of available templates
     AvailTemplates = find_disk_templates(Config)
-        ++ find_escript_templates(Files),
+        ++ find_escript_templates(),
 
-    {AvailTemplates, Files}.
-
-%%
-%% Scan the current escript for available files
-%%
-cache_escript_files(Config) ->
-    {ok, Files} = rebar_utils:escript_foldl(
-                    fun(Name, _, GetBin, Acc) ->
-                            [{Name, GetBin()} | Acc]
-                    end,
-                    [], rebar_config:get_xconf(Config, escript)),
-    Files.
+    {AvailTemplates, []}.
 
 template_id(Config) ->
     case rebar_config:get_global(Config, template, undefined) of
@@ -197,10 +181,8 @@ template_id(Config) ->
             TemplateId
     end.
 
-find_escript_templates(Files) ->
-    [{escript, Name}
-     || {Name, _Bin} <- Files,
-        re:run(Name, ?TEMPLATE_RE, [{capture, none}]) == match].
+find_escript_templates() ->
+    [{file, Name} || Name <- rebar_utils:find_files(code:priv_dir(rebar) ++ "/templates", ?TEMPLATE_RE)].
 
 find_disk_templates(Config) ->
     OtherTemplates = find_other_templates(Config),
@@ -231,10 +213,7 @@ select_template([{Type, Avail} | Rest], Template) ->
 %%
 %% Read the contents of a file from the appropriate source
 %%
-load_file(Files, escript, Name) ->
-    {Name, Bin} = lists:keyfind(Name, 1, Files),
-    Bin;
-load_file(_Files, file, Name) ->
+load_file(_Files, _, Name) ->
     {ok, Bin} = file:read_file(Name),
     Bin.
 

@@ -55,21 +55,7 @@ main(Args) ->
     true = code:add_path("ebin"),
 
     %% Run rebar compile to do proper .app validation etc.
-    %% and rebar escriptize to create the rebar script
-    rebar:main(["compile", "escriptize"] ++ Args),
-
-    %% Finally, update executable perms for our script on *nix,
-    %%  or write out script files on win32.
-    case os:type() of
-        {unix,_} ->
-            [] = os:cmd("chmod u+x rebar"),
-            ok;
-        {win32,_} ->
-            write_windows_scripts(),
-            ok;
-        _ ->
-            ok
-    end,
+    rebar:main(["compile"] ++ Args),
 
     %% Add a helpful message
     io:format("Congratulations! You now have a self-contained script called"
