@@ -54,11 +54,6 @@
     create(Config, File).
 
 'list-templates'(_Config, _File) ->
-    %% Load a list of all the files in the escript -- cache it in the pdict
-    %% since we'll potentially need to walk it several times over the course
-    %% of a run.
-    cache_escript_files(),
-
     %% Build a list of available templates
     AvailTemplates = find_disk_templates() ++ find_escript_templates(),
     ?CONSOLE("Available templates:\n", []),
@@ -70,11 +65,6 @@
 
 
 create(_Config, _) ->
-    %% Load a list of all the files in the escript -- cache it in the pdict
-    %% since we'll potentially need to walk it several times over the course
-    %% of a run.
-    cache_escript_files(),
-
     %% Build a list of available templates
     AvailTemplates = find_disk_templates() ++ find_escript_templates(),
     ?DEBUG("Available templates: ~p\n", [AvailTemplates]),
@@ -174,18 +164,6 @@ render(Bin, Context) ->
 %% Internal functions
 %% ===================================================================
 
-%%
-%% Scan the current escript for available files and cache in pdict.
-%%
-cache_escript_files() ->
-    {ok, Files} = rebar_utils:escript_foldl(
-                    fun(Name, _, GetBin, Acc) ->
-                            [{Name, GetBin()} | Acc]
-                    end,
-                    [], rebar_config:get_global(escript, undefined)),
-    erlang:put(escript_files, Files).
-
-
 template_id() ->
     case rebar_config:get_global(template, undefined) of
         undefined ->
@@ -195,8 +173,7 @@ template_id() ->
     end.
 
 find_escript_templates() ->
-    [{escript, Name} || {Name, _Bin} <- erlang:get(escript_files),
-                        re:run(Name, ?TEMPLATE_RE, [{capture, none}]) == match].
+    [{escript, Name} || Name <- rebar_utils:find_files(code:priv_dir(rebar) ++ "/templates", ?TEMPLATE_RE)].
 
 find_disk_templates() ->
     OtherTemplates = find_other_templates(),
@@ -227,10 +204,7 @@ select_template([{Type, Avail} | Rest], Template) ->
 %%
 %% Read the contents of a file from the appropriate source
 %%
-load_file(escript, Name) ->
-    {Name, Bin} = lists:keyfind(Name, 1, erlang:get(escript_files)),
-    Bin;
-load_file(file, Name) ->
+load_file(_, Name) ->
     {ok, Bin} = file:read_file(Name),
     Bin.
 
