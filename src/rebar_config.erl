@@ -40,12 +40,6 @@
                   opts = [] :: list(),
                   envs = new_env() :: term() }).
 
-%% Types that can be used from other modules -- alphabetically ordered.
--export_type([config/0]).
-
-%% data types
--opaque config() :: #config{}.
-
 %% ===================================================================
 %% Public API
 %% ===================================================================
