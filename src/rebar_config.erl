@@ -38,7 +38,7 @@
 
 -record(config, { dir :: file:filename(),
                   opts = [] :: list(),
-                  envs = new_env() :: dict() }).
+                  envs = new_env() :: term() }).
 
 %% Types that can be used from other modules -- alphabetically ordered.
 -export_type([config/0]).
