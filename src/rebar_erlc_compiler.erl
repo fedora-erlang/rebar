@@ -233,7 +233,7 @@ inspect_epp(Epp, Source, Module, Includes) ->
     end.
 
 -spec needs_compile(Source::file:filename(), Target::file:filename(),
-                    Hrls::[string()]) -> boolean().
+                    Hrls::[string()]) -> bool().
 needs_compile(Source, Target, Hrls) ->
     TargetLastMod = filelib:last_modified(Target),
     lists:any(fun(I) -> TargetLastMod < filelib:last_modified(I) end,
