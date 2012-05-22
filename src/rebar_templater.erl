@@ -80,8 +80,8 @@ create(_Config, _) ->
     %% Load the template definition as is and get the list of variables the
     %% template requires.
     TemplateTerms = consult(load_file(Type, Template)),
-    case lists:keyfind(variables, 1, TemplateTerms) of
-        {variables, Vars} ->
+    case lists:keysearch(variables, 1, TemplateTerms) of
+        {value, {variables, Vars}} ->
             case parse_vars(Vars, dict:new()) of
                 {error, Entry} ->
                     Context0 = undefined,

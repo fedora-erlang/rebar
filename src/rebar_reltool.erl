@@ -116,8 +116,8 @@ process_overlay(ReltoolConfig) ->
                                                     OverlayVars1),
 
     %% Finally, overlay the files specified by the overlay section
-    case lists:keyfind(overlay, 1, ReltoolConfig) of
-        {overlay, Overlay} when is_list(Overlay) ->
+    case lists:keysearch(overlay, 1, ReltoolConfig) of
+        {value, {overlay, Overlay}} when is_list(Overlay) ->
             execute_overlay(Overlay, OverlayVars, rebar_utils:get_cwd(),
                             TargetDir);
         false ->
@@ -156,10 +156,10 @@ load_vars_file(File) ->
 
 
 validate_rel_apps(ReltoolServer, {sys, ReltoolConfig}) ->
-    case lists:keyfind(rel, 1, ReltoolConfig) of
+    case lists:keysearch(rel, 1, ReltoolConfig) of
         false ->
             ok;
-        {rel, _Name, _Vsn, Apps} ->
+        {value, {rel, _Name, _Vsn, Apps}} ->
             %% Identify all the apps that do NOT exist, based on
             %% what's available from the reltool server
             Missing = lists:sort(
@@ -172,7 +172,7 @@ validate_rel_apps(ReltoolServer, {sys, ReltoolConfig}) ->
                     ?ABORT("Apps in {rel, ...} section not found by "
                            "reltool: ~p\n", [Missing])
             end;
-        Rel ->
+        {value, Rel} ->
             %% Invalid release format!
             ?ABORT("Invalid {rel, ...} section in reltools.config: ~p\n", [Rel])
     end.

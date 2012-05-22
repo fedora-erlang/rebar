@@ -159,8 +159,8 @@ filter_away_ignored(UnusedExports) ->
 
 
 kf(Key, List) ->
-    case lists:keyfind(Key, 1, List) of
-        {Key, Value} ->
+    case lists:keysearch(Key, 1, List) of
+        {value, {Key, Value}} ->
             Value;
         false ->
             []

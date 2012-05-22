@@ -137,8 +137,8 @@ load_config(ReltoolFile) ->
 %% Without this present, we can't run reltool.
 %%
 get_sys_tuple(ReltoolConfig) ->
-    case lists:keyfind(sys, 1, ReltoolConfig) of
-        {sys, _} = SysTuple ->
+    case lists:keysearch(sys, 1, ReltoolConfig) of
+        {value, {sys, _}} = SysTuple ->
             SysTuple;
         false ->
             ?ABORT("Failed to find {sys, [...]} tuple in reltool.config.", [])
@@ -151,13 +151,13 @@ get_sys_tuple(ReltoolConfig) ->
 get_target_dir(ReltoolConfig) ->
     case rebar_config:get_global(target_dir, undefined) of
         undefined ->
-            case lists:keyfind(target_dir, 1, ReltoolConfig) of
-                {target_dir, TargetDir} ->
+            case lists:keysearch(target_dir, 1, ReltoolConfig) of
+                {value, {target_dir, TargetDir}} ->
                     filename:absname(TargetDir);
                 false ->
                     {sys, SysInfo} = get_sys_tuple(ReltoolConfig),
-                    case lists:keyfind(rel, 1, SysInfo) of
-                        {rel, Name, _Vsn, _Apps} ->
+                    case lists:keysearch(rel, 1, SysInfo) of
+                        {value, {rel, Name, _Vsn, _Apps}} ->
                             filename:absname(Name);
                         false ->
                             filename:absname("target")
@@ -180,7 +180,7 @@ get_target_parent_dir(ReltoolConfig) ->
 %%
 get_root_dir(ReltoolConfig) ->
     {sys, SysInfo} = get_sys_tuple(ReltoolConfig),
-    SysRootDirTuple = lists:keyfind(root_dir, 1, SysInfo),
+    {value, SysRootDirTuple} = lists:keysearch(root_dir, 1, SysInfo),
     CmdRootDir = rebar_config:get_global(root_dir, undefined),
     case {SysRootDirTuple, CmdRootDir} of
         %% root_dir in sys typle and no root_dir on cmd-line
@@ -218,8 +218,8 @@ make_proplist([], Acc) ->
     Acc.
 
 expand_version(ReltoolConfig, Dir) ->
-    case lists:keyfind(sys, 1, ReltoolConfig) of
-        {sys, Sys} ->
+    case lists:keysearch(sys, 1, ReltoolConfig) of
+        {value, {sys, Sys}} ->
             ExpandedSys = {sys, [expand_rel_version(Term, Dir) || Term <- Sys]},
             lists:keyreplace(sys, 1, ReltoolConfig, ExpandedSys);
         _ ->
