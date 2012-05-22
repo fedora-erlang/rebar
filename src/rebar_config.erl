@@ -110,7 +110,7 @@ set(Config, Key, Value) ->
 set_global(jobs=Key, Value) when is_list(Value) ->
     set_global(Key, list_to_integer(Value));
 set_global(jobs=Key, Value) when is_integer(Value) ->
-    application:set_env(rebar_global, Key, erlang:max(1, Value));
+    application:set_env(rebar_global, Key, case (1 > Value) of true -> 1; _ -> Value end);
 set_global(Key, Value) ->
     application:set_env(rebar_global, Key, Value).
 

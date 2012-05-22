@@ -69,7 +69,10 @@ default_level() -> error_level().
 %% ===================================================================
 
 valid_level(Level) ->
-    erlang:max(error_level(), erlang:min(Level, debug_level())).
+    DL0= debug_level(),
+    EL = error_level(),
+    DL = case (Level < DL0) of true -> Level; _ -> DL0 end,
+    case (EL > DL) of true -> EL; _ -> DL end.
 
 error_level() -> 0.
 debug_level() -> 3.
