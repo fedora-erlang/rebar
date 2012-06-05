@@ -110,6 +110,9 @@ compile(Config, AppFile) ->
             ok;                                 % old specs empty
         {new, [], []} ->
             ok;                                 % port_specs empty
+        {_, _, [{_,_,_,[],[],_}]} ->
+            % Special case to discard port processing at all
+            ok;                                 % port_specs empty
 
         _ ->                                    % have old/new specs
 
