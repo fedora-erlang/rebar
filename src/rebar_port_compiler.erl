@@ -348,6 +348,12 @@ get_specs(Config, AppFile) ->
                     %% No spec provided. Construct a spec
                     %% from old-school so_name and sources
                     [port_spec_from_legacy(Config, AppFile)];
+                [{null,[]}] ->
+                    [];
+                [null] ->
+                    [];
+                [skip] ->
+                    [];
                 PortSpecs ->
                     Filtered = filter_port_specs(PortSpecs),
                     OsType = os:type(),
