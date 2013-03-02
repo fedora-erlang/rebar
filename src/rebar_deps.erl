@@ -305,7 +305,12 @@ find_dep(Config, Dep, _Source) ->
     %% _Source is defined.  Regardless of what it is, we must find it
     %% locally satisfied or fetch it from the original source
     %% into the project's deps
-    find_dep_in_dir(Config, Dep, get_deps_dir(Config, Dep#dep.app)).
+    case find_dep_in_dir(Config, Dep, get_deps_dir(Config, Dep#dep.app)) of
+        {_Config1, {avail, _Dir}} = Avail ->
+            Avail;
+        {Config1, {missing, _}} ->
+            find_dep_in_dir(Config1, Dep, get_lib_dir(Dep#dep.app))
+    end.
 
 find_dep_in_dir(Config, _Dep, {false, Dir}) ->
     {Config, {missing, Dir}};
