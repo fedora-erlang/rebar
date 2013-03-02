@@ -5,7 +5,6 @@
  [{description, "Rebar: Erlang Build Tool"},
   {vsn, "2.1.0-pre"},
   {modules, [ rebar,
-              rebar_abnfc_compiler,
               rebar_app_utils,
               rebar_appups,
               rebar_asn1_compiler,
@@ -61,7 +60,6 @@
          %% Dir specific processing modules
          {modules, [
                     {app_dir, [
-                               rebar_abnfc_compiler,
                                rebar_protobuffs_compiler,
                                rebar_neotoma_compiler,
                                rebar_asn1_compiler,
