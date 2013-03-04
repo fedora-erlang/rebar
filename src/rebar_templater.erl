@@ -241,12 +241,13 @@ find_escript_templates(Files) ->
         re:run(Name, ?TEMPLATE_RE, [{capture, none}]) == match].
 
 find_disk_templates(Config) ->
+    BaseTemplates = rebar_utils:find_files(code:priv_dir(rebar) ++ "/templates", ?TEMPLATE_RE),
     OtherTemplates = find_other_templates(Config),
     HomeTemplates = filename:join([os:getenv("HOME"), ".rebar", "templates"]),
     HomeFiles = rebar_utils:find_files_by_ext(HomeTemplates, ".template"),
     Recursive = rebar_config:is_recursive(Config),
     LocalFiles = rebar_utils:find_files_by_ext(".", ".template", Recursive),
-    [{file, F} || F <- OtherTemplates ++ HomeFiles ++ LocalFiles].
+    [{file, F} || F <- BaseTemplates ++ OtherTemplates ++ HomeFiles ++ LocalFiles].
 
 find_other_templates(Config) ->
     case rebar_config:get_global(Config, template_dir, undefined) of
