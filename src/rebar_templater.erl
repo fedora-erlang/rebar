@@ -102,8 +102,7 @@ render(Bin, Context) ->
     %% Be sure to escape any double-quotes before rendering...
     ReOpts = [global, {return, list}],
     Str0 = re:replace(Bin, "\\\\", "\\\\\\", ReOpts),
-    Str1 = re:replace(Str0, "\"", "\\\\\"", ReOpts),
-    rebar_mustache:render(Str1, Context).
+    mustache:render(Str0, Context).
 
 %% ===================================================================
 %% Internal functions
