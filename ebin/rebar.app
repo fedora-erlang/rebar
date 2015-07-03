@@ -45,7 +45,6 @@
               rebar_xref,
               rebar_metacmds,
               rebar_getopt,
-              rebar_mustache,
               rmemo,
               rebar_rand_compat ]},
   {registered, []},
