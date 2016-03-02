@@ -31,7 +31,6 @@
               rebar_port_compiler,
               rebar_proto_compiler,
               rebar_protobuffs_compiler,
-              rebar_proto_gpb_compiler,
               rebar_qc,
               rebar_rel_utils,
               rebar_reltool,
@@ -83,7 +82,6 @@
                     {app_dir, [
                                rebar_proto_compiler,
                                rebar_protobuffs_compiler,
-                               rebar_proto_gpb_compiler,
                                rebar_neotoma_compiler,
                                rebar_asn1_compiler,
                                rebar_dia_compiler,
