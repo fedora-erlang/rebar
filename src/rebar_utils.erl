@@ -791,7 +791,7 @@ cross_sizeof(Arch, Type) ->
     end.
 
 mktempfile(Suffix) ->
-    {A,B,C} = rebar_now(),
+    {A,B,C} = erlang:timestamp(),
     Dir = temp_dir(),
     File = "rebar_"++os:getpid()++
         integer_to_list(A)++"_"++
@@ -813,19 +813,6 @@ windows_temp_dir() ->
                 TMP -> TMP
             end;
         TEMP -> TEMP
-    end.
-
-rebar_now() ->
-    case erlang:function_exported(erlang, timestamp, 0) of
-        true ->
-            erlang:timestamp();
-        false ->
-            %% erlang:now/0 was deprecated in 18.0. One solution to avoid the
-            %% deprecation warning is to use
-            %% -compile({nowarn_deprecated_function, [{erlang, now, 0}]}), but
-            %% that would raise a warning in versions older than 18.0.  Calling
-            %% erlang:now/0 via apply/3 avoids that.
-            apply(erlang, now, [])
     end.
 
 native_wordsize() ->
