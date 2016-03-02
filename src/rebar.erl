@@ -156,11 +156,7 @@ init_config1(BaseConfig) ->
     rebar_config:set_xconf(BaseConfig1, base_dir, AbsCwd).
 
 profile(BaseConfig1, Commands) ->
-    ?CONSOLE("Please take note that profiler=[fprof|eflame] is preliminary"
-             " and will be~nreplaced with a different command line flag"
-             " in the next release.~n", []),
-    Profiler = rebar_config:get_global(BaseConfig1, profiler, "fprof"),
-    profile(BaseConfig1, Commands, list_to_atom(Profiler)).
+    profile(BaseConfig1, Commands, fprof).
 
 profile(Config, Commands, fprof) ->
     try
@@ -181,28 +177,6 @@ profile(Config, Commands, fprof) ->
                          " and fprof.cgrind~n", []),
                 ok
         end
-    end;
-profile(Config, Commands, eflame) ->
-    case code:lib_dir(eflame) of
-        {error, bad_name} ->
-            ?ABORT("eflame not found in code path~n", []),
-            ok;
-        EflameDir ->
-            Trace = "eflame.trace",
-            try
-                eflame:apply(normal_with_children, Trace,
-                             rebar, run, [Config, Commands])
-            after
-                %% generate flame graph
-                Script = filename:join(EflameDir, "stack_to_flame.sh"),
-                Svg = "eflame.svg",
-                %% stack_to_flame.sh < eflame.trace > eflame.png
-                Cmd = ?FMT("~s < ~s > ~s", [Script, Trace, Svg]),
-                {ok, []} = rebar_utils:sh(Cmd, [{use_stdout, false},
-                                                abort_on_error]),
-                ?CONSOLE("See eflame.svg (generated from eflame.trace)~n", []),
-                ok
-            end
     end;
 profile(_Config, _Commands, Profiler) ->
     ?ABORT("Unsupported profiler: ~s~n", [Profiler]).
@@ -499,9 +473,8 @@ option_spec_list() ->
      {jobs,     $j, "jobs",     integer,   JobsHelp},
      {config,   $C, "config",   string,    "Rebar config file to use"},
      {profile,  $p, "profile",  undefined,
-      "Profile this run of rebar. Via profiler= you can optionally select "
-      "either fprof (default) or eflame. The result can be found in "
-      "fprof.analysis or eflame.svg."},
+      "Profile this run of rebar. The result can be found in "
+      "fprof.analysis."},
      {keep_going, $k, "keep-going", undefined,
       "Keep running after a command fails"},
      {recursive, $r, "recursive", boolean,
