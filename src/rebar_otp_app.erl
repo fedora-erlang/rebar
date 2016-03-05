@@ -116,7 +116,10 @@ preprocess(Config, AppSrcFile) ->
 
 
             %% AppSrcFile may contain instructions for generating a vsn number
-            {Config2, Vsn} = rebar_app_utils:app_vsn(Config1, AppSrcFile),
+            {Config2, Vsn} = case os:getenv("VSN") of
+                                 false -> rebar_app_utils:app_vsn(Config1, AppSrcFile);
+                                 V -> {Config1, V}
+                             end,
             A2 = lists:keystore(vsn, 1, A1, {vsn, Vsn}),
 
             %% systools:make_relup/4 fails with {missing_param, registered}
