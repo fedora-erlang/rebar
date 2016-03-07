@@ -160,12 +160,17 @@ do_check_deps(Config) ->
         {Config1, {AvailDeps, []}} ->
             %% No missing deps
             {Config1, AvailDeps};
-        {_Config1, {_, MissingDeps}} ->
+        {Config1, {AvailDeps, MissingDeps}} ->
             lists:foreach(fun (#dep{app=App, vsn_regex=Vsn, source=Src}) ->
                                   ?CONSOLE("Dependency not available: "
                                            "~p-~s (~p)\n", [App, Vsn, Src])
                           end, MissingDeps),
-            ?FAIL
+            case os:getenv("IGNORE_MISSING_DEPS") of
+                false -> ?FAIL;
+                _ ->
+                    ?CONSOLE("Continue anyway because IGNORE_MISSING_DEPS was set\n", []),
+                    {Config1, lists:sort(AvailDeps ++ MissingDeps)}
+            end
     end.
 
 'check-deps'(Config, _) ->
