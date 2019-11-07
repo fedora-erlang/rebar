@@ -277,7 +277,7 @@ randomize_suites(Config, Modules) ->
         undefined ->
             Modules;
         "true" ->
-            Seed = crypto:rand_uniform(1, 65535),
+            Seed = rand:uniform(65536) - 1,
             randomize_suites1(Modules, Seed);
         String ->
             try list_to_integer(String) of
