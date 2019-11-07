@@ -42,8 +42,7 @@
               rebar_utils,
               rebar_xref,
               rebar_metacmds,
-              rmemo,
-              rebar_rand_compat ]},
+              rmemo ]},
   {registered, []},
   {applications,
    [
